@@ -17,6 +17,7 @@ public class EnemyHealth : MonoBehaviour
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
+        rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
 
@@ -27,8 +28,12 @@ public class EnemyHealth : MonoBehaviour
 
         // Apply knockback
         rb.velocity = new Vector2(knockbackStrength, rb.velocity.y);
+
         // Reduce heath by the attack damage of the arrow
         health -= damage;
+
+        // Play hit animation
+        anim.SetTrigger("Hurt");
 
         if (health <= 0){
             StartCoroutine(Dead());

@@ -8,20 +8,20 @@ public class DialogueScript : MonoBehaviour
     public DialogueManager dm;
 
     [Header("Dialogue Settings")]
+    [TextArea(3, 5)]
     public string[] dialogue;
     public bool playerInRange;
-    public bool displayingText;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        dm = GameObject.Find("Dialogue Manager").GetComponent<DialogueManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.E) && !displayingText){
+        if (Input.GetKeyDown(KeyCode.E) && !dm.displayingText){
             dm.dialogue = dialogue;
             StartCoroutine(dm.StartDialogue());
         }

@@ -7,6 +7,7 @@ public class ChargeEnemy : MonoBehaviour
     [Header("References")]
     public GameObject player;
     private Rigidbody2D rb;
+    
     [Header("General Setting")]
     public float movementSpeed;
 
@@ -31,6 +32,8 @@ public class ChargeEnemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
+        rb = gameObject.GetComponent<Rigidbody2D>();
         currentTarget = pointA;
     }
 

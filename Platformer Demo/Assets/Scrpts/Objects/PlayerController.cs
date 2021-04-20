@@ -74,7 +74,16 @@ public class PlayerController : MonoBehaviour
             if (rb.velocity.x != 0){
 
                 // If the player is moving, set the player animation to running
-                //anim.SetBool("isRun", true);
+                if (Input.GetKey(KeyCode.LeftShift)){
+
+                    anim.SetBool("Sprinting", true);
+                }   else {
+                    anim.SetBool("Walking", true);
+                }
+            }   else {
+            
+                anim.SetBool("Walking", false);
+                anim.SetBool("Sprinting", false);
             }
             
         }
@@ -88,7 +97,7 @@ public class PlayerController : MonoBehaviour
         // Set the horizontal movement of the player
         if (Input.GetKey(KeyCode.LeftShift)){
             // Sprint speed
-            movementVelocity = new Vector2(Input.GetAxisRaw("Horizontal") * movementSpeed, rb.velocity.y);
+            movementVelocity = new Vector2(Input.GetAxisRaw("Horizontal") * sprintSpeed, rb.velocity.y);
         }   else {
             // Regular movement speed
             movementVelocity = new Vector2(Input.GetAxisRaw("Horizontal") * movementSpeed, rb.velocity.y);

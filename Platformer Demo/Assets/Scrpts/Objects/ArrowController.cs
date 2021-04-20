@@ -31,12 +31,20 @@ public class ArrowController : MonoBehaviour
     }
 
     // Called when the arrow collides with something
-    private void OnCollisionEnter2D(Collision2D collider) {
-        if (collider.gameObject.tag == "Enemy"){
-            collider.gameObject.GetComponent<EnemyHealth>().Hit(damage, knockbackStrength*direction);
+    private void OnTriggerEnter2D(Collider2D collider) {
+        if (collider.tag == "Enemy"){
+            EnemyHealth enemyScript = collider.GetComponent<EnemyHealth>();
+
+            // Call enemy hurt function
+            enemyScript.StartCoroutine(enemyScript.Hit(damage, knockbackStrength*direction));
+                
+            // Destroy the arrow
+            Destroy(gameObject);
+        }   else if (collider.tag == "Wall"){
+                
+            // Destroy the arrow
+            Destroy(gameObject);
         }
-        // Destroy the arrow
-        Destroy(gameObject);
     }
 }
 
