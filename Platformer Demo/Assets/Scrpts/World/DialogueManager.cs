@@ -25,6 +25,7 @@ public class DialogueManager : MonoBehaviour
     {
         // Get initial references
         anim = gameObject.GetComponent<Animator>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -38,7 +39,7 @@ public class DialogueManager : MonoBehaviour
     void DisplayDialogue(){
         // Only display text when needed
         if (displayingText){
-            text.text = dialogue[currentDialogueIndex];
+            text.text = dialogue[currentDialogueIndex-1];
 
             // When displaying text, check for input to continue or end text
             if (Input.GetKeyDown(KeyCode.E)){
@@ -79,9 +80,9 @@ public class DialogueManager : MonoBehaviour
         anim.SetBool("ShowText", false);
         
         // Unlock player movement
-        player.GetComponent<PlayerController>().movementLocked = true;
+        player.GetComponent<PlayerController>().movementLocked = false;
 
-        //
+        // Wait for the text animation end time
         yield return new WaitForSeconds(textStartTime);
         displayingText = false;
         text.text = "";
