@@ -45,8 +45,9 @@ public class EnemyHealth : MonoBehaviour
 
     // Coroutine to be called when the enemy dies
     IEnumerator Dead(){
-
+        anim.SetBool("Dead", true);
         yield return new WaitForSeconds(deathTime);
+        Destroy(gameObject);
     }
 
 }
