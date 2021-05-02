@@ -10,24 +10,31 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private BoxCollider2D bc;
+    public GameObject healthBar;
     
     [Header("Movement Settings")]
     public bool movementLocked;
     public float movementSpeed;
     public float jumpHeight;
+    public float rollSpeed;
+    public float rollTime;
+    public float lastInput;
 
     [Header("Attack Settings")]
     public bool attacking;
     public int attackDamage;
     public float attackKnockbackStrength;
     public float attackSpeed;
+    public float attackLungeSpeed;
     public BoxCollider2D attackBox;
 
     [Header("Health Settings")]
     public int health;
     public float knockbackTime;
-    public float knockbackStrength;
-    public int hitDamage;
+    public float recoveryTime;
+    public float vKnockbackStrength;
+    public float hKnockbackStrength;
+    public bool invincible;
     
     
     void Awake() {
@@ -41,7 +48,7 @@ public class PlayerController : MonoBehaviour
     // Raycast under the player to check if the player is grounded
     bool IsGrounded(){
         // Makes a boxcast downwards and returns if the boxcast hit the ground
-        RaycastHit2D raycast = Physics2D.BoxCast(bc.bounds.center, bc.bounds.size, 0f, Vector2.down, 0.5f, groundLayer);
+        RaycastHit2D raycast = Physics2D.BoxCast(bc.bounds.center, bc.bounds.size, 0f, Vector2.down, 0.3f, groundLayer);
         return raycast;
         
     }
@@ -49,6 +56,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Run player animation function every frame
+        Animations();
+
         // Only allow player movement if movement locked is false
         if (!movementLocked){
 
@@ -59,11 +69,12 @@ public class PlayerController : MonoBehaviour
             PlayerAttack();
         }
 
-        // Run player animation function every frame
-        Animations();
 
         // Check for collisions from enemies
         CheckHit();
+
+        // Manage health
+        ManageHealthAnimation();
     }
 
     // Control all the animations
@@ -81,6 +92,8 @@ public class PlayerController : MonoBehaviour
             if (rb.velocity.x != 0 && Input.GetAxisRaw("Horizontal") != 0){
                 // If the player is moving, set the player animation to running
                 anim.SetBool("IsRun", true);
+
+                lastInput = Mathf.Sign(rb.velocity.x);
                 
             }   else {
                 anim.SetBool("IsRun", false);
@@ -107,8 +120,26 @@ public class PlayerController : MonoBehaviour
 
         // Set velocity to the stored velocity
         rb.velocity = movementVelocity;
+
+        // If the player is on the ground, and he inputs roll keys
+        if (IsGrounded() && (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.G))){
+            StartCoroutine(Roll());
+        }
     }
 
+    IEnumerator Roll(){
+        movementLocked = true;
+
+        // Move player towards rolling direction
+        rb.velocity = new Vector2(rollSpeed * lastInput, rb.velocity.y);
+
+        // Set rolling animation
+        anim.SetBool("IsRoll", true);
+        yield return new WaitForSeconds(rollTime);
+
+        anim.SetBool("IsRoll", false);
+        movementLocked = false;
+    }
     // Controls all player attacking
     void PlayerAttack(){
 
@@ -130,7 +161,7 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("Attack");
 
         // Detect enemies in range
-        RaycastHit2D raycast = Physics2D.BoxCast(attackBox.bounds.center, attackBox.bounds.size, 0f, Vector2.right, 0.5f, enemyLayer);
+        RaycastHit2D raycast = Physics2D.BoxCast(attackBox.bounds.center, attackBox.bounds.size, 0f, Vector2.right, 0f, enemyLayer);
 
         // If enemy is in range, attack them
         if (raycast){
@@ -138,6 +169,9 @@ public class PlayerController : MonoBehaviour
             raycast.collider.GetComponent<EnemyHealth>().StopAllCoroutines();
             StartCoroutine(raycast.collider.GetComponent<EnemyHealth>().Hit(attackDamage, attackKnockbackStrength*enemyDirection));
         }
+        
+        // Move player towards rolling direction
+        rb.velocity = new Vector2(attackLungeSpeed * lastInput, rb.velocity.y);
         yield return new WaitForSeconds(attackSpeed);
         movementLocked = false;
         attacking = false;
@@ -147,18 +181,56 @@ public class PlayerController : MonoBehaviour
     void CheckHit(){
         
         RaycastHit2D raycast = Physics2D.BoxCast(bc.bounds.center, bc.bounds.size, 0f, Vector2.down, 0, enemyLayer);
-        if (raycast && !movementLocked){
+        if (raycast && !invincible && !raycast.collider.GetComponent<EnemyHealth>().dead){
             float dir = Mathf.Sign(transform.position.x - raycast.transform.position.x);
             StartCoroutine(OnHit(dir));
         }
     }
     public IEnumerator OnHit(float dir){
-        rb.velocity = new Vector2(knockbackStrength * dir, knockbackStrength);
+        // Apply knockback
+        rb.velocity = new Vector2(hKnockbackStrength * dir, vKnockbackStrength);
+
+        // Stop player movmeent and start i frames
         movementLocked = true;
+        invincible = true;
+
+        // Start animations
         anim.SetTrigger("Hurt");
         anim.SetBool("IsRun", false);
-        health -= hitDamage;
-        yield return new WaitForSeconds(knockbackTime);
-        movementLocked = false;
+
+        // Reduce health 
+        health -= 1;
+
+        // Check if dead
+        if (health <= 0){
+            anim.SetBool("Dead", true);
+            rb.velocity = new Vector2(0, 0);    
+        }   else {
+            // Wait for the knockback time
+            yield return new WaitForSeconds(knockbackTime);
+
+            // Allow player movement after knockback time
+            movementLocked = false;
+
+            // Wait for recovery time
+            yield return new WaitForSeconds(recoveryTime);
+
+            // Allow player to be hit after recovery
+            invincible = false;
+        }
+
+    }
+
+    void ManageHealthAnimation(){
+        if (health == 0){
+            healthBar.transform.GetChild(0).GetComponent<Animator>().SetBool("Empty", true);
+            healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
+            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+        }   else if (health == 1){
+            healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
+            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+        }   else if (health == 2){
+            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+        }
     }
 }

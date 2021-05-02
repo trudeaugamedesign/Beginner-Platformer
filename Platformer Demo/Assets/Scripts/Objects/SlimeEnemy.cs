@@ -16,7 +16,7 @@ public class SlimeEnemy : MonoBehaviour
     [Header("General Settings")]
     public bool hit;
     public bool canMove;
-    public float patrolDistance;
+    public float attackDistance;
     public float jumpAnimationTime;
 
     [Header("Movement Settings")]
@@ -41,7 +41,7 @@ public class SlimeEnemy : MonoBehaviour
             hit = eh.hit;
         }
         if (canMove && IsGrounded() && !hit){
-            if (Vector2.Distance(player.transform.position, transform.position) > patrolDistance){
+            if (Vector2.Distance(player.transform.position, transform.position) > attackDistance){
                 StartCoroutine(Patrol());
             }   else {
                 StartCoroutine(Attack());
@@ -68,7 +68,7 @@ public class SlimeEnemy : MonoBehaviour
 
 
     float PlayerDirection(){
-        return Mathf.Sign(transform.position.x - player.transform.position.x);
+        return Mathf.Sign(player.transform.position.x - transform.position.x);
     }
 
     IEnumerator Patrol(){

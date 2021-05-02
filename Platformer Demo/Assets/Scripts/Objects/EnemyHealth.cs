@@ -13,6 +13,7 @@ public class EnemyHealth : MonoBehaviour
     public bool hit;
     public float deathTime;
     public float knockbackTime;
+    public bool dead;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +46,7 @@ public class EnemyHealth : MonoBehaviour
 
     // Coroutine to be called when the enemy dies
     IEnumerator Dead(){
+        dead = true;
         anim.SetBool("Dead", true);
         yield return new WaitForSeconds(deathTime);
         Destroy(gameObject);
