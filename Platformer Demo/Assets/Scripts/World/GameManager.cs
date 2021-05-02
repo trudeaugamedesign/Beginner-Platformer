@@ -14,24 +14,26 @@ public class GameManager : MonoBehaviour
     public string currentRespawnPoint;  
     public float fadeOutTime;
     public float deathTime;
-    public bool reset;
+    public bool changingScenes;
     public bool paused;
     // Start is called before the first frame update
     void Start()
     {
         DontDestroyOnLoad(gameObject);
         anim = gameObject.GetComponent<Animator>();
-        SetReferences();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!reset && player.health <= 0){
-            StartCoroutine(ResetGame());
-        }
+        if (SceneManager.GetActiveScene() == SceneManager.GetSceneByBuildIndex(1)){
+            
+            if (!changingScenes && player.health <= 0){
+                StartCoroutine(ResetGame());
+            }
 
-        PauseMenu();
+            PauseMenu();
+        }
     }
 
     void PauseMenu(){
@@ -49,12 +51,15 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator ResetGame(){
         // Set bool
-        reset = true;
+        changingScenes = true;
+
+        // Wait for player death animation to finish
+        yield return new WaitForSeconds(deathTime);
 
         // Start Animation
         anim.SetBool("FadeOut", true);
 
-        // Wait for animation to finish
+        // Wait for fadeout animation to finish
         yield return new WaitForSeconds(fadeOutTime);
 
         // Load the sync and wait for the scene to load
@@ -77,7 +82,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(fadeOutTime);
 
         // Set bool
-        reset = false;
+        changingScenes = false;
         player.movementLocked = false;
     }
 
@@ -97,6 +102,42 @@ public class GameManager : MonoBehaviour
 
         // Record new point
         currentRespawnPoint = point;
+    }
+
+    public void PlayButton(){
+        if (!changingScenes){
+            StartCoroutine(StartGame());
+        }
+    }
+
+    IEnumerator StartGame(){
+        // Set bool
+        changingScenes = true;
+
+        // Start Animation
+        anim.SetBool("FadeOut", true);
+
+        // Wait for animation to finish
+        yield return new WaitForSeconds(fadeOutTime);
+
+        // Load the sync and wait for the scene to load
+        AsyncOperation load = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+        while (!load.isDone){
+            yield return null;
+        }
+
+        SetReferences();
+
+        // Start animation
+        anim.SetBool("FadeOut", false);
+
+        // Wait for animation to finish
+        yield return new WaitForSeconds(fadeOutTime);
+
+        // Set bool
+        changingScenes = false;
+        player.movementLocked = false;
+
     }
 
 }

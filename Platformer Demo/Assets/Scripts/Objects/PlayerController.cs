@@ -204,6 +204,10 @@ public class PlayerController : MonoBehaviour
         // Check if dead
         if (health <= 0){
             anim.SetBool("Dead", true);
+            // Wait for the knockback time
+            yield return new WaitForSeconds(knockbackTime);
+
+            // Stop velocity
             rb.velocity = new Vector2(0, 0);    
         }   else {
             // Wait for the knockback time
