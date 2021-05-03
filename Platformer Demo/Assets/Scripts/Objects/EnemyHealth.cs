@@ -33,11 +33,14 @@ public class EnemyHealth : MonoBehaviour
         // Reduce heath by the attack damage of the arrow
         health -= damage;
 
-        // Play hit animation
-        anim.SetTrigger("Hurt");
 
         if (health <= 0){
+            // Start death sequence
             StartCoroutine(Dead());
+        }   else {
+                
+            // Play hit animation
+            anim.SetTrigger("Hurt");
         }
 
         yield return new WaitForSeconds(knockbackTime);
