@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 271281571}
   m_Layer: 9
   m_Name: Slime Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,12 +170,11 @@ MonoBehaviour:
     m_Bits: 64
   hit: 0
   canMove: 1
-  patrolDistance: 0
+  attackDistance: 7
   jumpAnimationTime: 0.2
   movementSpeed: 2
-  jumpHeight: 6
-  jumpDelay: 5
-  attackDamage: 0
+  jumpHeight: 4
+  jumpDelay: 3
 --- !u!114 &271281571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,7 +187,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef3bf1bb5ecbf7c4ebe2f5a9756bf883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  health: 4
   hit: 0
-  deathTime: 0
-  knockbackTime: 0
+  deathTime: 0.4
+  knockbackTime: 1
+  dead: 0

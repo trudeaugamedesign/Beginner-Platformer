@@ -164,8 +164,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   hit: 0
-  deathTime: 0.35
+  deathTime: 0.3
   knockbackTime: 1
+  dead: 0
 --- !u!95 &7153379559701423657
 Animator:
   serializedVersion: 3
