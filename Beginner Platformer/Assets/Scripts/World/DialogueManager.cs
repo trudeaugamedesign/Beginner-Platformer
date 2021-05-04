@@ -66,6 +66,7 @@ public class DialogueManager : MonoBehaviour
     
         // Lock player movement
         player.GetComponent<PlayerController>().movementLocked = true;
+        player.GetComponent<Rigidbody2D>().velocity = new Vector2(0, player.GetComponent<Rigidbody2D>().velocity.y);
 
         // Wait for tehe time it takes for the animation to run
         yield return new WaitForSeconds(textStartTime);
