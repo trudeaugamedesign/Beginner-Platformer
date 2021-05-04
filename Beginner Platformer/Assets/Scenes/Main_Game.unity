@@ -20376,7 +20376,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 497888866664467513, guid: 09ef04e4002451247b657a48ada734a5, type: 3}
       propertyPath: dialogue.Array.data[0]
-      value: Thanks for playing our demo game!
+      value: Thanks for playing our beginner platformer!
       objectReference: {fileID: 0}
     - target: {fileID: 497888866664467513, guid: 09ef04e4002451247b657a48ada734a5, type: 3}
       propertyPath: dialogue.Array.data[1]
@@ -22168,8 +22168,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 497888866664467513, guid: 09ef04e4002451247b657a48ada734a5, type: 3}
       propertyPath: dialogue.Array.data[0]
-      value: Welcome to Trudeau Game Design's demo game! Check our github for the
-        source code
+      value: Welcome to Trudeau Game Design's beginner platformer! Check our github
+        for the source code
       objectReference: {fileID: 0}
     - target: {fileID: 497888866664467513, guid: 09ef04e4002451247b657a48ada734a5, type: 3}
       propertyPath: dialogue.Array.data[1]
