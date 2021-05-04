@@ -87,6 +87,8 @@ public class DialogueManager : MonoBehaviour
         displayingText = false;
         text.text = "";
     }
+
+    // Coroutine that runs whenever the text is transitioning
     public IEnumerator TextAnimation(){
         anim.SetTrigger("ChangeText");
         yield return new WaitForSeconds(textAnimTime);

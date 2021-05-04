@@ -189,6 +189,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 4
   hit: 0
-  deathTime: 0.4
+  deathTime: 0.35
   knockbackTime: 1
   dead: 0

@@ -69,7 +69,6 @@ public class PlayerController : MonoBehaviour
             PlayerAttack();
         }
 
-
         // Check for collisions from enemies
         CheckHit();
 
@@ -101,6 +100,7 @@ public class PlayerController : MonoBehaviour
             
         }
 
+        // Set the grounded variable
         anim.SetBool("IsGrounded", IsGrounded());
     }
 
@@ -128,7 +128,9 @@ public class PlayerController : MonoBehaviour
     }
 
     IEnumerator Roll(){
+        // Set variables
         movementLocked = true;
+        invincible = true;
 
         // Move player towards rolling direction
         rb.velocity = new Vector2(rollSpeed * lastInput, rb.velocity.y);
@@ -137,8 +139,12 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("IsRoll", true);
         yield return new WaitForSeconds(rollTime);
 
+        // End roling animation
         anim.SetBool("IsRoll", false);
+
+        // Set variables
         movementLocked = false;
+        invincible = false; 
     }
     // Controls all player attacking
     void PlayerAttack(){
@@ -178,14 +184,23 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    // Handles checking for enemy collisions 
     void CheckHit(){
-        
+        // Set a raycast over the player
         RaycastHit2D raycast = Physics2D.BoxCast(bc.bounds.center, bc.bounds.size, 0f, Vector2.down, 0, enemyLayer);
+
+        // If the raycast hits, the player is not currently invincible, and the enemy is not dead
         if (raycast && !invincible && !raycast.collider.GetComponent<EnemyHealth>().dead){
+            // Find the direction that the enemy came from
             float dir = Mathf.Sign(transform.position.x - raycast.transform.position.x);
+
+            // Call the hit function
             StartCoroutine(OnHit(dir));
         }
     }
+
+
+    // Runs when the player is hit by an enemy
     public IEnumerator OnHit(float dir){
         // Apply knockback
         rb.velocity = new Vector2(hKnockbackStrength * dir, vKnockbackStrength);
@@ -225,16 +240,22 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // Manage the health bar and its animations
     void ManageHealthAnimation(){
-        if (health == 0){
-            healthBar.transform.GetChild(0).GetComponent<Animator>().SetBool("Empty", true);
-            healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
-            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
-        }   else if (health == 1){
-            healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
-            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
-        }   else if (health == 2){
-            healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+        // Set the amount of health points visible based on current health
+        switch (health){
+            case 0:
+                healthBar.transform.GetChild(0).GetComponent<Animator>().SetBool("Empty", true);
+                healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
+                healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+                break;
+            case 1:
+                healthBar.transform.GetChild(1).GetComponent<Animator>().SetBool("Empty", true);
+                healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);
+                break;
+            case 2:
+                healthBar.transform.GetChild(2).GetComponent<Animator>().SetBool("Empty", true);    
+                break;
         }
     }
 }

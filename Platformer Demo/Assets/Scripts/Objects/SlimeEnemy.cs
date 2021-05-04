@@ -36,11 +36,15 @@ public class SlimeEnemy : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   
+    {     
+        // Set the hit variable always equal to the health hit variable
         if (eh.hit != hit){
             hit = eh.hit;
         }
+
+        // Only run main loop if slime has not been hit or is not on the ground
         if (canMove && IsGrounded() && !hit){
+            // Patrol or attack depending on if the player is within the attack range
             if (Vector2.Distance(player.transform.position, transform.position) > attackDistance){
                 StartCoroutine(Patrol());
             }   else {
@@ -51,8 +55,10 @@ public class SlimeEnemy : MonoBehaviour
     }
 
     void Animations(){
-        
+        // Set grounded variable
         anim.SetBool("IsGrounded", IsGrounded());
+
+        // Set the direction of the slime depending on what direction it is going when its in the air
         if (rb.velocity.x > 0 && !IsGrounded()){
             sr.flipX = true;
         }   else if (rb.velocity.x < 0 && !IsGrounded()){

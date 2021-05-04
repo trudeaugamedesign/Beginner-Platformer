@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
         currentRespawnPoint = point;
     }
 
+    // For the play button
     public void PlayButton(){
         if (!changingScenes){
             StartCoroutine(StartGame());
@@ -139,5 +140,38 @@ public class GameManager : MonoBehaviour
         player.movementLocked = false;
 
     }
+
+    // For the return to main menu button
+    public void ReturnToMainMenu(){
+        if (!changingScenes){
+            StartCoroutine(Reset());
+        }
+    }  
+
+
+    // Resets the game and returns the game to the main menu
+    IEnumerator Reset(){
+        // Set bool
+        changingScenes = true;
+
+        // Start animation
+        anim.SetBool("FadeOut", true);
+
+        // Stop pause
+        Time.timeScale = 1;
+
+        // Wait for animation to finish
+        yield return new WaitForSeconds(fadeOutTime);
+
+        // Load the sync and wait for the scene to load
+        AsyncOperation load = SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
+        while (!load.isDone){
+            yield return null;
+        }
+
+        // Destroy game object
+        Destroy(gameObject);
+
+    }                                      
 
 }

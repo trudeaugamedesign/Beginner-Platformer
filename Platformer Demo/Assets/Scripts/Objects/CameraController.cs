@@ -13,19 +13,21 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Set the target to the player
         target = GameObject.FindGameObjectWithTag("Player");
     }
 
-    // Update is called once per frame
+    // Like update, but is always run at the same time with the physics, should prevent camera stuttering
     void FixedUpdate()
     {
         followTarget();
     }
 
     void followTarget(){
-        // Vector2 targetPosition = new Vector2(target.transform.position.x+offset.x, target.transform.position.y+offset.y);
+        // Set the intended position
         Vector3 targetPosition = target.transform.position + offset;
 
+        // Lerp the camera towards the position
         transform.position = Vector3.Lerp(transform.position, targetPosition, cameraSpeed);
     }
 }
